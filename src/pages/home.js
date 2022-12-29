@@ -5,7 +5,6 @@ import { useNavigate } from 'react-router-dom';
 
 const Home = () => {
   const[inputValue,setInputValue]=useState();
-  // const [show, setShow] = useState(false);
     const navi = useNavigate();
 
     const allocate=()=>{
@@ -22,14 +21,12 @@ const Home = () => {
           <Form>
             <Form.Group className="mb-3" controlId="formBasicPassword">
               <Form.Label>Enter a Number</Form.Label>
-              <Form.Control type="number" placeholder="Enter " value={inputValue} onChange={(e) => { setInputValue(e.target.value) }} />
+              <Form.Control type="number" data-testid='input' placeholder="Enter Number of Parking slots" value={inputValue} onChange={(e) => { setInputValue(e.target.value) }} />
             </Form.Group>
-
             <Button variant="primary" disabled={!inputValue} onClick={allocate}>
               Submit
             </Button>
           </Form>
-
         </Card.Body>
       </Card>
 

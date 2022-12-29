@@ -1,24 +1,24 @@
 import React, { useEffect, useState } from "react";
 import { Button, Card, Form, InputGroup, Modal } from "react-bootstrap";
 
-  // import axios from "axios";
-import {  useNavigate } from "react-router-dom";
+// import axios from "axios";
+import { json, useNavigate } from "react-router-dom";
 
 const ParkkAllocations = () => {
-  // const [date, setDate] = useState(
-  //   new Date().toLocaleTimeString("en-US", {
-  //     hour: "numeric",
-  //     minute: "numeric",
-  //   })
-  // );
+  const [date, setDate] = useState(
+    new Date().toLocaleTimeString("en-US", {
+      hour: "numeric",
+      minute: "numeric",
+    })
+  );
   const navi = useNavigate();
-  // const [show, setShow] = useState("");
+  const [show, setShow] = useState("");
   const [sin, setsin] = useState(false);
   const display = localStorage.getItem("value");
   const [cardd, setcardd] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [deallocateObj, setDeallocateObj] = useState(null);
-  const [vehicleNumber,setVehicleNumber] = useState('');
+  const [vehicleNumber,setVehicleNumber] = useState(null);
 
   useEffect(() => {
     getNoOfCrds();
@@ -64,11 +64,6 @@ const ParkkAllocations = () => {
 
     let isVehiclePresent = cardd.map(item => item.vehicleNum ).includes(vehicle);
 
-    // a["car"] = vehicle;
-    // a["isAllocated"] = true;
-    // a['parkedTime'] = new Date();
-    // setsin(true);
-
     if (isVehiclePresent) {
       alert(`Vehicle with this number ${vehicle} is already parked here`);
     } else {
@@ -104,6 +99,10 @@ const ParkkAllocations = () => {
     }
   };
 
+  const detailpage = () => {
+    navi("/parked");
+  };
+
   const dellocate=(obj)=>{
     setDeallocateObj(obj);
     handleShow()
@@ -113,10 +112,10 @@ const ParkkAllocations = () => {
   const handleShow = () => setShowModal(true);
 
   function msToTime(ms) {
-    // let seconds = (ms / 1000).toFixed(1);
-    // let minutes = (ms / (1000 * 60)).toFixed(1);
+    let seconds = (ms / 1000).toFixed(1);
+    let minutes = (ms / (1000 * 60)).toFixed(1);
     let hours = (ms / (1000 * 60 * 60)).toFixed(1);
-    // let days = (ms / (1000 * 60 * 60 * 24)).toFixed(1);
+    let days = (ms / (1000 * 60 * 60 * 24)).toFixed(1);
     return hours;
     
     // if (seconds < 60) return seconds + " Sec";
@@ -132,7 +131,7 @@ const ParkkAllocations = () => {
       totalPay += ((Math.round(totalHours) - 2))*10
     }
     return(
-      <Modal show={showModal} onHide={handleClose}>
+      <Modal show={showModal} onHide={handleClose} data-testid="modal">
         <Modal.Header closeButton>
           <Modal.Title>Bill Amount :</Modal.Title>
         </Modal.Header>
@@ -263,19 +262,19 @@ const ParkkAllocations = () => {
   return (
     <div>
       <h2 data-testid='heading' style={{ textAlign: "center" }}>Parking allocations</h2>
-      {console.log('render',cardd)}
       {deallocateObj && renderBill()}
-      <InputGroup style={{padding:'1% 5% 1% 5%'}} className="p-6">
-        <Form.Control
-          placeholder="Enter Vehicle Number"
-          aria-label="Vehicle Number"
-          aria-describedby="basic-addon2"
-          onChange={e => setVehicleNumber(e.target.value)}
-        /> &nbsp; &nbsp;
-        <Button variant="btn btn-primary" id="button-addon2" onClick={parkRandomly}>
-          Submit
-        </Button>
-      </InputGroup>
+        <InputGroup style={{padding:'1% 5% 1% 5%'}} className="p-6">
+          <Form.Control
+            placeholder="Enter Vehicle Number"
+            aria-label="Vehicle Number"
+            aria-describedby="basic-addon2"
+            onChange={e => setVehicleNumber(e.target.value)}
+            data-testid="inputElement"
+          /> &nbsp; &nbsp;
+          <Button variant="btn btn-primary" data-testid="submit" id="button-addon2" onClick={vehicleNumber && parkRandomly}>
+            Submit
+          </Button>
+        </InputGroup>
       <span>
         {cardd.map((s, index) => {
           return (
@@ -295,15 +294,12 @@ const ParkkAllocations = () => {
                 <Card.Subtitle className="mb-2 text-muted">
                   Location:<b> {s.locationName}</b>
                 </Card.Subtitle>
-                {/* {sin ? <Card.Text onClick={detailpage}>{s.car}</Card.Text> : ""} */}
                 <Card.Text> Vehicle Number : {s.isAllocated ? <span style={{fontWeight:'bolder'}}>{s.vehicleNum} </span>: <span style={{fontStyle:'italic'}}>Not yet reserved</span> }</Card.Text>
                 <Card.Text>Parked Time : {s.isAllocated ? <span style={{fontWeight:'bolder'}}>{s.timetoDisplay}</span> :  <span style={{fontStyle:'italic'}}>Not yet reserved</span>}</Card.Text>
-                {/* <Card.Text className="btb btn-danger">Status: <span className={s.isAllocated ? 'text-danger' : 'text-success'}> {s.isAllocated ? 'Engaged' : 'Available'}</span></Card.Text> */}
-                <span></span>
                 <span style={{ alignSelf: "center" }}>
                   {s.isAllocated ? 
-                    <Button className="btn btn-danger" onClick={() => dellocate(s)}>Deallocate</Button>
-                  :<Button className="btn btn-success Bookbutton" onClick={(e) => bookParking(s, e)}>Book</Button>}
+                    <Button className="btn btn-danger"  data-testid={`deallocate${index}`} onClick={() => dellocate(s)}>Deallocate</Button>
+                  :<Button className="BookButton btn btn-success" data-testid={`slot${index}`} onClick={(e) => bookParking(s, e)}>Book</Button>}
                 </span>
               </Card.Body>
             </Card>
